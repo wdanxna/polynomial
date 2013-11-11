@@ -5,7 +5,7 @@
 int read_row(int row[]);
 void process(int row[], int num, int lead[], int power[]);
 void printResult(int lead[], int power[]);
-int binarySearch(int num, int arr[]);
+int binarySearch(int num, int arr[],int left, int right);
 void quickSort(int arr[], int left, int right);
 
 int main(void){
@@ -61,14 +61,25 @@ void process(int row[], int num, int lead[], int power[]){
 	printf("\n");
 
 	for (i=0;i<k;i++){
-		lead[binarySearch(curPower[k],power)] += curLead[k];
+		lead[binarySearch(curPower[k],power,0,MAX_INPUT)] += curLead[k];
 	}
-	quickSort(lead,0,k);
 }
 
-int binarySearch(int num, int arr[]){
-	int i,j,mid;
-	mid;
+int binarySearch(int num, int arr[],int left, int right){
+	int mid,i,swp1,swp2;
+	if (left > right){
+		//insert at right
+		swp1 = num;
+		for (i=right;i<k;i++){
+			swp2 = arr[i+1];
+			arr[i+1] = arr[i];
+			
+		}	
+	}
+	mid = (left+right)/2;
+	if (arr[mid] > num) binarySearch(num,arr,left,mid-1);
+	if (arr[mid] < num) binarySearch(num,arr,mid+1,right);
+	return mid;
 }
 
 void quickSort(int arr[], int left, int right){
