@@ -5,13 +5,17 @@
 int read_row(int row[]);
 void process(int row[], int num, int lead[], int power[]);
 void printResult(int lead[], int power[]);
-int binarySearch(int num, int arr[],int left, int right);
-void quickSort(int arr[], int left, int right);
+int binarySearch(int num, int power[],int lead[],int left, int right);
 
 int main(void){
 	int n,c,set;
 	int row[MAX_INPUT], num_per_row;
 	int lead[MAX_INPUT],power[MAX_INPUT];
+	//init
+	for (n=0;n<MAX_INPUT;n++){
+		lead[n] = 0;
+		power[n] = -1;
+	}
 
 	scanf("%d",&n);
 	scanf("%c",&c);
@@ -39,7 +43,7 @@ int read_row(int row[]){
 }
 
 void process(int row[], int num, int lead[], int power[]){
-	int curLead[num/2], curPower[num/2],i;
+	int curLead[num/2], curPower[num/2],i,j,pos;
 	int k=0;
 	if (num % 2 !=0){
 		printf("num_per_row needs to be paired.");
@@ -50,7 +54,7 @@ void process(int row[], int num, int lead[], int power[]){
 		curPower[k++] = row[i+1];
 	}
 
-	printf("\n current lead:\n");
+	/*printf("\n current lead:\n");
 	for (i=0;i<k;i++){
 		printf("%d ",curLead[i]);
 	}	
@@ -58,36 +62,57 @@ void process(int row[], int num, int lead[], int power[]){
 	for (i=0;i<k;i++){
 		printf("%d ",curPower[i]);
 	}	
-	printf("\n");
+	printf("\n");*/
 
 	for (i=0;i<k;i++){
-		lead[binarySearch(curPower[k],power,0,MAX_INPUT)] += curLead[k];
+		pos = binarySearch(curPower[i],power,lead,0,MAX_INPUT);
+		//printf("pos: %d",pos);
+		lead[pos] += curLead[i];
 	}
+	/*printf("\npower:");
+	for (j=0;j<k;j++){
+			printf("%d ",power[j]);
+	}
+
+	printf("\nlead: ");
+	for (j=0;j<k;j++){
+			printf("%d ",lead[j]);
+	}
+	printf("\n");*/
 }
 
-int binarySearch(int num, int arr[],int left, int right){
-	int mid,i,swp1,swp2;
+int binarySearch(int num, int power[],int lead[],int left, int right){
+	int mid,i,len,result;
 	if (left > right){
-		//insert at right
-		swp1 = num;
-		for (i=right;i<k;i++){
-			swp2 = arr[i+1];
-			arr[i+1] = arr[i];
-			
-		}	
+		//find the valid bound for arr, since arr is power
+		//the valid value cannot be negative.
+		//printf("through here %d mid: %d\n",num,right+1);
+		len = 0;
+		while (power[len++] > 0);
+		len--;
+		for (i=len;i>=right+1;i--){
+			power[i+1] = power[i];
+			lead[i+1] = lead[i];
+		}
+		lead[right+1] = 0;
+		power[right+1] = num;
+		return right+1;	
 	}
 	mid = (left+right)/2;
-	if (arr[mid] > num) binarySearch(num,arr,left,mid-1);
-	if (arr[mid] < num) binarySearch(num,arr,mid+1,right);
-	return mid;
-}
-
-void quickSort(int arr[], int left, int right){
-
+	result = mid;
+	//printf("mid:%d num: %d ",mid,num);	
+	if (power[mid] > num) result=binarySearch(num,power,lead,mid+1,right);
+	if (power[mid] < num) result=binarySearch(num,power,lead,left,mid-1);
+	return result;
 }
 
 void printResult(int lead[], int power[]){
-
+	int i;
+	int len = 0;
+	while (power[len++] > 0);
+	for (i=0;i<len-1;i++){
+		printf("[%d,%d]",power[i],lead[i]);
+	}
 }
 
 
